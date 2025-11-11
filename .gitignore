@@ -1,7 +1,3 @@
-# ------------------------------
-# Python SMTP Email Project
-# ------------------------------
-
 # Bytecode and cache files
 __pycache__/
 *.pyc
