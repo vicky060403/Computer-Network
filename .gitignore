@@ -1,0 +1,32 @@
+# ------------------------------
+# Python SMTP Email Project
+# ------------------------------
+
+# Bytecode and cache files
+__pycache__/
+*.pyc
+*.pyo
+
+# Virtual environment folders
+venv/
+env/
+
+# Attachment files (personal/private data)
+attachments/*
+!attachments/.keep   # Keep the folder itself but ignore its contents
+
+# Credentials or secrets (if any)
+*.env
+*.json
+*.ini
+secrets.txt
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE or editor settings
+.vscode/
+.idea/
+*.swp

@@ -1,0 +1,85 @@
+# ==========================================
+# 📧 Email Sending Application (with Attachment Folder)
+# ==========================================
+
+import smtplib
+import ssl
+from email.message import EmailMessage
+import getpass
+import os
+import mimetypes
+
+# 1️⃣ USER INPUT
+print("=== Python Email Sender with Attachment Folder ===")
+
+sender_email = input("Enter your Gmail address: ")
+password = getpass.getpass("Enter your Gmail App Password: ")
+receiver_email = input("Enter receiver's email: ")
+subject = input("Enter subject: ")
+
+print("\nEnter your message (end with a blank line):")
+lines = []
+while True:
+    line = input()
+    if not line:
+        break
+    lines.append(line)
+body = "\n".join(lines)
+
+# 2️⃣ ASK FOR ATTACHMENT
+attach_choice = input("\nDo you want to attach a file from the attachments folder? (y/n): ").lower()
+
+attachment_path = None
+if attach_choice == 'y':
+    file_name = input("Enter the file name (e.g. example.pdf): ")
+
+    # Construct full path (relative to current folder)
+    attachment_path = os.path.join("attachments", file_name)
+
+    if not os.path.exists(attachment_path):
+        print("❌ File not found in attachments folder. Skipping attachment.")
+        attachment_path = None
+    else:
+        print(f"📎 File found: {attachment_path}")
+
+# 3️⃣ CREATE EMAIL MESSAGE
+msg = EmailMessage()
+msg["From"] = sender_email
+msg["To"] = receiver_email
+msg["Subject"] = subject
+msg.set_content(body)
+
+# 4️⃣ ADD ATTACHMENT (if provided)
+if attachment_path:
+    with open(attachment_path, "rb") as f:
+        file_data = f.read()
+        file_name = os.path.basename(f.name)
+
+    mime_type, _ = mimetypes.guess_type(attachment_path)
+    if mime_type is None:
+        mime_type = "application/octet-stream"
+    maintype, subtype = mime_type.split("/", 1)
+
+    msg.add_attachment(file_data, maintype=maintype, subtype=subtype, filename=file_name)
+    print(f"✅ Attached file: {file_name}")
+
+# 5️⃣ CONNECT TO GMAIL SMTP SERVER
+smtp_server = "smtp.gmail.com"
+port = 587  # STARTTLS
+
+context = ssl.create_default_context()
+
+print("\n🔗 Connecting to SMTP server...")
+try:
+    with smtplib.SMTP(smtp_server, port) as server:
+        server.ehlo()
+        server.starttls(context=context)
+        server.ehlo()
+        server.login(sender_email, password)
+        server.send_message(msg)
+        print("\n✅ Email sent successfully!")
+
+except smtplib.SMTPAuthenticationError:
+    print("❌ Authentication failed. Please check your App Password.")
+except Exception as e:
+    print(f"❌ Error: {e}")
