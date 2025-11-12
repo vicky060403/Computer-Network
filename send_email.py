@@ -17,7 +17,7 @@ while True:
     if not line:
         break
     lines.append(line)
-body = "\n".join(lines)
+body = " ".join(lines)
 
 attach_choice = input("\nDo you want to attach a file? (y/n): ").lower()
 attachment_path = None
